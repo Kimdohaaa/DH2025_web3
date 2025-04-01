@@ -4,7 +4,7 @@
 - 사용처 : 자바 / 파이썬 등
 
 [Hibernate]
-- 정의 : 자바에서 ORM 을 구현한 프레임워크
+- 정의 : 자바에서 ORM 을 구현한 구현체 (프레임워크)
 - 목적 : 자바 개발자가 SQL 없이 DB 테이블을 다루기 위함
     1) 빠른 개발 -> SQL 쿼리를 자동으로 생성하므로 개발자가 직접 SQL 을 작성하지 않아도 됨
     2) 자동 타입변환 지원
@@ -12,6 +12,55 @@
     등등~~~
 
 [JPA (Java Persistence(영속성) Api)]
-- 정의
+- 정의 : ORM 기술의 구현체를 조작하는 인터페이스 프레임워크
     1) 자바에서 ORM 을 사용할 때 사용하는 표준 API
     2) 자바에서 ORM 을 어떻게 처리할 지 정의하나 라이브러리(인터페이스 / 어노테이션 / 클래스)
+
+[JPA 설치]
+1. build.gradle 에 JPA 라이브러리 설치
+    -> implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+2. application.properties 에서 JPA 설정 (JDBC 는 별도 설정해야함)
+    <JPA DDL 자동 처리 설정>
+        1) spring.jpa.hibernate.ddl-auto = create
+            -> 서버가 실행될 때마다 기존 테이블 삭제 후 새로운 테이블 생성 [개발단계]
+        2) spring.jpa.hibernate.ddl-auto = update
+            -> 서버가 실행될 때마다 기존 테이블 유지 / 변경, 추가 상황이 잇을 때만 수정 생성 [배포단계]
+        3) spring.jpa.hibernate.ddl-auto = none ※ 기본값 ※
+            -> 개발자 직접 DDL 관리
+        3) spring.jpa.hibernate.ddl-auto = create-drop
+            -> 서버가 종료될 때마다 테이블 삭제 [개발단계]
+        3) spring.jpa.hibernate.ddl-auto = validate
+            -> 서버가 실행 될 때마다 엔티티 일치 여부 검사 (값 변경 X / 단순 검사)
+    <콘솔에서 JPA 가 자동으로 처리한 SQL 확인 설정>
+        1) spring.jpa.show-sql = true
+            -> 콘솔에 JPA 가 처리한 SQL 출력 설정
+        2) spring.jpa.properties.hibernate.format_sql = true
+            -> 콘솔에 SQL 형식으로 출력 설정
+        3) logging.level.org.hibernate.SQL = DEBUG
+            -> 콘솔에 JPA 가 처리한 디버그 출력
+        4)  logging.level.org.hibernate.orm.jdbc.bind = TRACE
+            -> 콘솔에 JPA 가 처리한 매개변수 출력
+
+[JPA]
+1. entity : DB 테이블과 매핑된 객체(인스턴스) ★ 엔티티 : 개체 ★
+    <클래스 예] 학생클래스>     <-영속성 기반 매핑->  <DB 의 테이블 예] 학생테이블>
+    <인스턴스 예] new 학생(1)> <-영속성 기반 매핑->  <해당 테이블의 레코드 예] insert into 학생 value(1)>
+
+[JPA 주요 어노테이션]
+1. @Entity : 해당 클래스를 DB 테이블과 매핑 (해당 클래스는 영속성 컨텍스트에 저장됨)
+2. @Table(name = "테이블명") : 테이블명 정의 (생략 시 자바 클래스 명으로 정의됨)
+3. @Id : entity 기본키(primary key) 를 지정
+    -> 모든 엔티티 / 테이블은 한 개 이상의 PK 를 가져야함 (없으면 실행 불가)
+4. @GeneratedValue(strategy = GenerationType.IDENTITY) : 해당 멤버변수에 auto_increment 지원
+    ★ MySQL 만 지원 Oracle 지원 X ★
+    ★ @Id 어노테이션을 통해 PK 키로 지정된 멤버변수에만 사용 가능 ★
+5. @Column : 엔티티의 속성 매핑
+    1) nullable = true/false : null 제약조건 (true : 기본값 / false : not null)
+    2) unique = true/false : unique 제약조건 (true : unique / false : 기본값)
+    3) columnDefinition = "DB 타입" : 해당 멤버변수에 직접 타입 지정
+    4) name = "이름" : 필드명 지정 (생략 시 자바 멤버변수명 적용)
+    5) length = 길이 : 길이가 존재하는 필드의 길이 지정
+    6) insertable = true/false : insert 적용 필드 여부 지정 (true : 기본값 / false : insert 불가)
+    7) updatable = true/false : update 적용 필드 여부 지정 (true : 기본값 / false : update 불가)
+
+
