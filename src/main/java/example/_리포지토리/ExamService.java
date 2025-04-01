@@ -70,6 +70,10 @@ public class ExamService {
     public boolean delete(String id){
         examEntityRepository.deleteById(id);
 
+        System.out.println(examEntityRepository.findAll()); // 전체 조회
+        System.out.println(examEntityRepository.count()); // 레코드 전체 개수 반환 (long 타입으로 반환)
+        System.out.println(examEntityRepository.existsById(id)); // PK 키에 해당하는 엔티티 존재여부 반환
+
         return true;
     }
 
