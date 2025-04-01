@@ -1,0 +1,20 @@
+[플러터 SDK 다운로드]
+1. 플러터 SDK 다운로드 : https://docs.flutter.dev/get-started/install/windows/mobile
+2. 우측 상단 Get Started
+3. Window -> Android
+4. [Install the Flutter SDK] -> [Download and Install] -> [flutter_windows_3.29.2-stable.zip]
+(강의 기준 3버전 다운로드)
+5. 다운로드 받은 파일 압축 풀기
+6. C:/src/flutter 폴더에 위치시키기
+7. 윈도우 아이콘 검색차에 '계정의 환경 변수 편집' 선택
+8. '사용자변수' 목록에 'Path' 변수 더블 클릭
+9. [새로만들기] -> C:/src/flutter/bin 을 추가하기
+
+[안드로이드 스튜디오 다운로드]
+1. 안드로이드 스튜디오 다운로드 : https://developer.android.com/studio?hl=ko
+2. [Android 스튜디오 Meerkat 다운로드] -> 약관동의 -> 다운로드
+3. Android Virtual Device 꼭 선택해서 다운하기!!!
+4. 안드로이드 스튜디오 실행
+5. [Plugins] -> [Marketplace] -> Flutter 과 Dart install -> [Restart]
+6. [Projects] -> [new Flutter Project] -> SDK 위치 : C:/scr/flutter (플러터 압축 푼 경로) 로 지정 -> [NEXT]
+
