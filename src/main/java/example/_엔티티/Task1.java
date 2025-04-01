@@ -16,8 +16,8 @@ public class Task1 {
     @Column(nullable = false, columnDefinition = "varchar(100)")
     private String title;
 
-    @Column(nullable = false, columnDefinition = "boolean")
-    private boolean state;
+    @Column(nullable = false)
+    private boolean state ;
 
     @Column(nullable = false)
     private LocalDate createat;
