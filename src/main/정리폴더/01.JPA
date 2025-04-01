@@ -64,3 +64,38 @@
     7) updatable = true/false : update 적용 필드 여부 지정 (true : 기본값 / false : update 불가)
 
 
+[JPA Repository]
+<사용법>
+1. 인터페이스 생성
+2. 해당 인터페이스 위에 @Repository 어노테이션을 통해 bean 등록
+3. 해당 인터페이스에 JpaRepository 상속받기
+    -> public interface 인터페이슴여 extends JpaRepository<조작할엔티티명, 해당엔티티의 ID타입>{ }
+    -> JpaRepository
+        1) 기본적인 CRUD(insert/select/update/delete) 제공
+        2) 추가적인 쿼리 작성 시 추상메소드를 통해 구현
+
+[CRUD 메소드]
+1. .save(저장할 엔티티객체) : 존재하지 않는 PK 면 insert / 존재하는 PK면 update 됨
+2. .findAll() : 모든 엔티티를 select (전체조회) ★ 반환타입은 List<> 타입으로 반환됨 ★
+3. .findById(Pk키) : PK 에 해당하는 엔티티 반환 (존재하지 않을 시 null 반환) ★ 반환타입은 Optional<> 타입으로 반환됨 ★
+    -> 일반적인 사용처 : 수정 시 존재하는 ID 를 조회한 후 수정하기 위해 .findById() 메소드 사용
+    -> 사용 흐름
+        1) Pk 키에 해당하는 엔티티 찾기
+            Optional<엔티티클래스> 변수명 = 인터페이스명.findById(PK키);
+        2) 엔티티 존재여부 확인
+            if(Optional객체명.isPresent())
+        3) 존재 시 영속된 엔티티 꺼내기
+            엔티티클래스명 변수명 = Optional객체명.get();
+        4) Setter 을 통해 수정
+            영속된엔티티변수명.setXXX();
+4. .deleteAll() : 엔티티 전체 삭제
+5. .deleteById(삭제할 PK 키) : PK 에 해당하는 엔티티 삭제 ★ 반환타입 void (반환이 없음) ★
+6. .count() : 레코드 엔티티 전체 개수 반환 ★ 반환타입 long ★
+7. .existsById(PK키) : PK 에 해당하는 엔티티 존재여부 boolean 타입으로 반환
+
+※ Optional 클래스 : null 에 관련된 메소드를 제공하는 클래스(nullPointException 방지를 위해 사용) ※
+-> 주요 메소드
+    1) .isPresent() : null 이면 false / 존재 시 true 반환
+    2) .get() : 객체 반환
+    3) .orElse(null 일 때 값) : 객체 반환 시 null 이면 지정된 값 반환
+    4) .orElseThrow(예외객체) : 객체 반환 시 null 이면 예외 발생
