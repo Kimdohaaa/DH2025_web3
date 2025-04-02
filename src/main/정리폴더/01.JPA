@@ -99,3 +99,44 @@
     2) .get() : 객체 반환
     3) .orElse(null 일 때 값) : 객체 반환 시 null 이면 지정된 값 반환
     4) .orElseThrow(예외객체) : 객체 반환 시 null 이면 예외 발생
+
+[JPA Auditing]
+- 정의 : 엔티티의 생성/수정 변화를 기록하는 걸 자동으로 감시하는 기능
+- 목적 : SQL Insert/Update 를 감시하여 기록함
+- 사용처 BaseTime 상속 클래스 (엔티티들의 생성 / 수정 필드)
+- 사용법
+    1) AppStart 클래스 위에 @EnableJpaAuditing 어노테이션 주입을 통해 변환 감지 기능 활성화
+    2) BaseTime 클래스 엔티티 생성
+        <BaseTime 엔티티에 어노테이션 주입>
+        - @MappedSuperClass 주입 : 해당 클래스를 일반 클래스 엔티티가 아닌 슈퍼 클래스 엔티티(공통로직)로 사용
+        - @EntityListeners(AuditingEntityListener.class) 주입 : 해당 클래스의 멤버변수들을 JPA 감지 대상으로 지정
+        - @Getter 주입
+        <BaseTime 엔티티의 멤버변수>
+        - @CreateDate : Insert 시 자동으로 레코드 생성 날짜 기록
+          private LocalDateTime 변수명;
+        - @LastModifiedDate : Update 시 레코드 수정 날짜 기록
+          private LocalDateTime 변수명;
+    3) 실직적으로 사용할 엔티티 클래스에서 extends BaseTime 으로 상속받기
+
+
+[JPA Entity 와 DTO/VO 변환]
+<일반적인 흐름>
+ *View(화면템플릿)* <-HTTP(JSON <-> DTO)-> *Controller* <-JPA(DTO <-> Entity)-> *Service* <-Entity-> Repository <-> DB
+    1) React
+    2) 타임리프       <=@RequestBody=>                         <=toDto=>
+    3) Flutter      <=@ResponseBOdy=>                       <=toEntity=>
+    4) JPS
+    5) 머스테치
+
+[JPA 영속성(Persistence)]
+- 정의 : 자바객체를 데이터베이스와 연관지어 생명주기를 관리하며 동기화하는 기능
+- 영속성 컨텍스트 : 연속된 객체들을 관리하는 메모리 공간
+- 영속성 매니저 : 영속된 객체들을 저장 / 조회 / 수정 / 삭제 가능
+    <주요 메소드>
+    1) .persist(객체) : 해당 객체에 영속성 부여
+    2) .detach(객체)  : 해당 객체에 영속성 해제
+    3) .remove(객체)  : 해당 객체에 영속성 삭제
+    4) .merage(객체)  : 해당 객체의 영속성 다시 부여
+
+★ 목적 : 객체정보를 저장/기록 하여 한번 기록한 정보에 변화가 없을 경우 DB 에게 다시 요청하지 않고 컨텍스트에서 가져와 재사용 가능 ★
+-> DB 접근 효율성이 좋음
