@@ -52,8 +52,7 @@ public class TaskService {
         CourseEntity course = courseRepository.findById(studentDto.getCno())
                 .orElse(null);
 
-        course.setCno(studentDto.getCno());
-        studentEntity.setCourseEntity(course);
+       studentEntity.setCourseEntity(course);
 
         studentRepository.save(studentEntity);
 
