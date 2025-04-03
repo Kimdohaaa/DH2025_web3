@@ -43,14 +43,15 @@ public class TaskService {
 
     // [3] 특정 과정에 수강생 등록
     public boolean post2(StudentDto studentDto){
-       // DTO -> Entity
         StudentEntity studentEntity = StudentEntity.builder()
                 .sno(studentDto.getSno())
                 .sname(studentDto.getSname())
                 .build();
 
+
         CourseEntity course = courseRepository.findById(studentDto.getCno())
                 .orElse(null);
+
         course.setCno(studentDto.getCno());
         studentEntity.setCourseEntity(course);
 
@@ -69,7 +70,6 @@ public class TaskService {
         List<StudentEntity> result1 = new ArrayList<>();
 
         for (StudentEntity student : entityList) {
-            // CourseEntity가 null이 아니고, cno가 일치하는 경우만 추가
             if (student.getCourseEntity() != null && student.getCourseEntity().getCno() == cno) {
                 result1.add(student);
             }
