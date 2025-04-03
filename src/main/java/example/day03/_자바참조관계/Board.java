@@ -2,6 +2,7 @@ package example.day03._자바참조관계;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class Board {
     // => Category 는 Board 를 모름
 
     // *** 양방향 *** //
+    // 순환참조 방지를 위해 toString 에서 제외
+    @ToString.Exclude // @ToString.Exclude(lombok 어노테이션) : 해당 필드를 toString 메소드에서 제외
     private List<Reply> replyList; // 1 : n 양방향 참조
 
 }
