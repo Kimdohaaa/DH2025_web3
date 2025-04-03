@@ -18,7 +18,7 @@ public class StudentEntity extends BaseTime {
     private int sno;
 
     private String sname;
-private int cno;
+    private int cno;
 
     // FK 키
     @ManyToOne

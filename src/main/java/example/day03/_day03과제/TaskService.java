@@ -67,16 +67,21 @@ public class TaskService {
 
         List<StudentEntity> entityList = studentRepository.findAll();
 
-        List<StudentDto> sList = entityList.stream()
-                .map(StudentEntity::toDto)
-                .collect(Collectors.toList());
-        List<StudentDto> result = new ArrayList<>();
-        for(int i = 0 ; i < sList.size(); i ++ ) {
-            if (sList.get(i).getCno() == cno) {
-                result.add(sList.get(i));
+        List<StudentEntity> result1 = new ArrayList<>();
+
+        for (StudentEntity student : entityList) {
+            // CourseEntity가 null이 아니고, cno가 일치하는 경우만 추가
+            if (student.getCourseEntity() != null && student.getCourseEntity().getCno() == cno) {
+                result1.add(student);
             }
         }
-        return result;
+
+
+        List<StudentDto> sList = result1.stream()
+                .map(StudentEntity::toDto)
+                .collect(Collectors.toList());
+
+        return sList;
 
     }
 }
