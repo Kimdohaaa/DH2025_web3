@@ -1,6 +1,6 @@
-package example.day04.model.entity;
+package example.day04.day04.model.entity;
 
-import example.day04.model.dto.TodoDto;
+import example.day04.day04.model.dto.TodoDto;
 import jakarta.persistence.*;
 import lombok.*;
 

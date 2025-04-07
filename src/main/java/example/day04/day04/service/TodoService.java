@@ -1,8 +1,8 @@
-package example.day04.service;
+package example.day04.day04.service;
 
-import example.day04.model.dto.TodoDto;
-import example.day04.model.entity.TodoEntity;
-import example.day04.model.repository.TodoRepository;
+import example.day04.day04.model.dto.TodoDto;
+import example.day04.day04.model.entity.TodoEntity;
+import example.day04.day04.model.repository.TodoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
