@@ -9,10 +9,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -210,5 +212,37 @@ public class TodoService {
         // return  todoRepository.findAll(pageRequest).stream()
         //          .map(TodoEntity::toDto)
         //          .collect(Collectors.toList());
+    }
+
+    // [*] 제목 검색 조회 (입력한 값과 일치한 제목 조회)
+    public List<TodoDto> search1 (String title){
+        System.out.println("TodoService.search1");
+        System.out.println("title = " + title);
+
+        // *) 쿼리메소드 : JPA Repository 에 직접 만든 추상메소드 사용
+        return todoRepository.findByTitle(title)
+                .stream().map(TodoEntity::toDto)
+                .collect(Collectors.toList());
+
+        // *) 네이티브쿼리 : JPA Repository 에 직접 만든 추상메소드 사용
+        // return todoRepository.findByTitleNative(title)
+        //         .stream().map(TodoEntity::toDto)
+        //         .collect(Collectors.toList());
+    }
+
+    // [*] 제목 검색 조회 (입력한 값이 포함된 제목 조회)
+    public List<TodoDto> search2 (String keyword){
+        System.out.println("TodoService.search2");
+        System.out.println("keyword = " + keyword);
+
+        // *) 쿼리메소드
+        // return todoRepository.findByTitleContaining(keyword)
+        //         .stream().map(TodoEntity::toDto)
+        //         .collect(Collectors.toList());
+
+        // *) 네이티브쿼리
+        return todoRepository.findByTitleNativeSearch(keyword)
+                .stream().map(TodoEntity::toDto)
+                .collect(Collectors.toList());
     }
 }

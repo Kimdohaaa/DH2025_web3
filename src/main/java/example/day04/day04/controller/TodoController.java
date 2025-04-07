@@ -1,6 +1,7 @@
 package example.day04.day04.controller;
 
 import example.day04.day04.model.dto.TodoDto;
+import example.day04.day04.model.entity.TodoEntity;
 import example.day04.day04.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -67,5 +68,23 @@ public class TodoController {
         System.out.println("TodoController.todoFindAllPage");
 
         return todoService.todoFindByPage(page, size);
+    }
+
+    // [*] 제목 검색 조회 (입력한 값과 일치한 제목 조회)
+    @GetMapping("/search1")
+    public List<TodoDto> search1 (@RequestParam  String title){
+        System.out.println("TodoService.search1");
+        System.out.println("title = " + title);
+
+        return todoService.search1(title);
+
+    }
+    // [*] 제목 검색 조회 (입력한 값이 포함된 제목 조회)
+    @GetMapping("/search2")
+    public List<TodoDto> search2(@RequestParam String keyword){
+        System.out.println("TodoController.search2");
+        System.out.println("keyword = " + keyword);
+
+        return todoService.search2(keyword);
     }
 }

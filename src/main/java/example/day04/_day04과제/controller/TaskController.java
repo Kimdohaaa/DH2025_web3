@@ -17,7 +17,7 @@ public class TaskController {
 
     // [1] 비품 등록
     @PostMapping
-    public TaskDto save(@RequestBody TaskDto taskDto){
+    public boolean save(@RequestBody TaskDto taskDto){
         System.out.println("TaskController.save");
         System.out.println("taskDto = " + taskDto);
 
@@ -43,7 +43,7 @@ public class TaskController {
 
     // [4] 비품 수정
     @PutMapping
-    public TaskDto update(@RequestBody  TaskDto taskDto){
+    public boolean update(@RequestBody  TaskDto taskDto){
         System.out.println("TaskController.update");
         System.out.println("taskDto = " + taskDto);
 

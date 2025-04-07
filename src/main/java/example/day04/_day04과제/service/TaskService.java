@@ -23,28 +23,49 @@ public class TaskService {
     private final TaskRepository taskRepository;
 
     // [1] 비품 등록
-    public TaskDto save(TaskDto taskDto){
-        System.out.println("TaskService.save");
-        System.out.println("taskDto = " + taskDto);
+//    public TaskDto save(TaskDto taskDto){
+//        System.out.println("TaskService.save");
+//        System.out.println("taskDto = " + taskDto);
+//
+//        TaskEntity taskEntity = taskDto.toEntity();
+//
+////        TaskEntity saveEntity = taskRepository.save(taskEntity);
+////        if(saveEntity.getId() > 1){
+////            return saveEntity.toDto();
+////        }else {
+////            return null;
+////        }
+//
+//    }
+    // *) 네이티브쿼리
+
+    public boolean save(TaskDto taskDto){
 
         TaskEntity taskEntity = taskDto.toEntity();
+        int saveEntity = taskRepository.save2(taskEntity.getName(),
+                taskEntity.getDescription(),
+                taskEntity.getQuantity());
 
-        TaskEntity saveEntity = taskRepository.save(taskEntity);
-
-        if(saveEntity.getId() > 1){
-            return saveEntity.toDto();
-        }else {
-            return null;
+        if(saveEntity > 0){
+            return true;
         }
+
+        return false;
     }
 
     // [2] 전체 비품 조회
     public List<TaskDto> findAll(){
         System.out.println("TaskService.findAll");
 
-        return taskRepository.findAll().stream()
+        // *) 네이티브쿼리
+        return taskRepository.findAll2().stream()
                 .map(TaskEntity::toDto)
                 .collect(Collectors.toList());
+
+
+//        return taskRepository.findAll().stream()
+//                .map(TaskEntity::toDto)
+//                .collect(Collectors.toList());
     }
 
     // [3] 개별 비품 조회
@@ -52,29 +73,42 @@ public class TaskService {
         System.out.println("TaskService.find");
         System.out.println("id = " + id);
 
-        return taskRepository.findById(id)
+        // *) 네이티브쿼리
+        return taskRepository.findById2(id)
                 .map(TaskEntity::toDto)
                 .orElse(null);
+
+
+//        return taskRepository.findById(id)
+//                .map(TaskEntity::toDto)
+//                .orElse(null);
     }
 
     // [4] 비품 수정
-    public TaskDto update(TaskDto taskDto){
+    public boolean update(TaskDto taskDto){
         System.out.println("TaskService.update");
         System.out.println("taskDto = " + taskDto);
 
-        Optional<TaskEntity> optional = taskRepository.findById(taskDto.getId());
+        // *) 네이티브쿼리
+        TaskEntity taskEntity = taskDto.toEntity();
 
-        if(optional.isPresent()){
-            TaskEntity taskEntity = optional.get();
+        int saveEntity
+                = taskRepository.findById3(taskDto.getName(), taskEntity.getDescription(), taskEntity.getQuantity(), taskEntity.getId());
 
-            taskEntity.setName(taskDto.getName());
-            taskEntity.setDescription(taskDto.getDescription());
-            taskEntity.setQuantity(taskDto.getQuantity());
-
-            return taskEntity.toDto();
-        }
-
-        return null;
+        return true;
+//        Optional<TaskEntity> optional = taskRepository.findById(taskDto.getId());
+//
+//        if(optional.isPresent()){
+//            TaskEntity taskEntity = optional.get();
+//
+//            taskEntity.setName(taskDto.getName());
+//            taskEntity.setDescription(taskDto.getDescription());
+//            taskEntity.setQuantity(taskDto.getQuantity());
+//
+//            return taskEntity.toDto();
+//        }
+//
+//        return null;
     }
 
     // [5] 비품 삭제
@@ -82,14 +116,20 @@ public class TaskService {
         System.out.println("TaskService.delete");
         System.out.println("id = " + id);
 
-        return taskRepository.findById(id)
-                .map(
-                        (entity) -> {
-                            taskRepository.deleteById(id);
-                            return  true;
-                        }
-                )
-                .orElse(false);
+        // *) 네이티브쿼리
+
+        if( taskRepository.deleteById2(id) > 0 ){
+            return true;
+        };
+        return false;
+//        return taskRepository.findById(id)
+//                .map(
+//                        (entity) -> {
+//                            taskRepository.deleteById(id);
+//                            return  true;
+//                        }
+//                )
+//                .orElse(false);
     }
 
     // [6] 페이징 처리가 추가된 전체 비품 조회
