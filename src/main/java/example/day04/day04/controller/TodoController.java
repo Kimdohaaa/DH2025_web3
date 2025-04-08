@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/day04/todos")
 @RequiredArgsConstructor
+@CrossOrigin("*") // 플러터와 통신을 위해 Cors 허용
 public class TodoController {
 
     private final TodoService todoService;
