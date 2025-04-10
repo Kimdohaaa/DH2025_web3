@@ -33,3 +33,6 @@
 14. [Deploy]
 
 15. application.properties 에서 Koyeb 에서 사용하는 포트 번호 설정 : spring.port= ${PORT:8080}
+16. 프로젝트 루트 파일에 system.properties 패키지 생성 후 java.runtime.version=17 를 통해 버전 맞추기
+
+17. Koyeb 대시보드 -> Public URL 에 있는 ip 주소 확인 -> 제공된 주소 + 프로젝트 주소 -> 배포 성공!
