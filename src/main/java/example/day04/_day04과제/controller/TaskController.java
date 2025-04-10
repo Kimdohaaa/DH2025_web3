@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/day04/task")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class TaskController {
 
     private final TaskService taskService;
