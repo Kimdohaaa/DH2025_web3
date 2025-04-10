@@ -1,5 +1,5 @@
 [무료 기준 자바(Spring) 톰캣 배포]
-1. 스프링에서 새로웅ㄴ 브랜치 생성
+1. 스프링에서 새로dns 브랜치 생성
 2. java 패키지 내 에 필요한 파일만 남기기
 3. MySQL 대신 H2(인메모리->휘발성)라는 서버내 DB 사용
     -> build.gradle 에 H2 build : runtimeOnly 'com.h2database:h2'
@@ -7,11 +7,29 @@
 4. H2 를 DB 로 연동
     -> application.properties
         spring.datasource.driverClassName = org.h2.Driver
-        spring.datasource.url = jdbc:h2:mem:springweb2
+        spring.datasource.url = jdbc:h2:mem:DB명
         spring.datasource.username = sa
         # password 생략
 
         # H2 접속방법 설정
         spring.h2.console.enabled = true
         spring.h2.console.path = /h2-console
-5.
+5. http://localhost:8080/h2-console 접속
+    -> JDVC URL : jdbc:h2:mem:DB명
+    -> UserName : sa
+    -> [Test Connection] -> [Connect]
+6. 현재 브랜치로 commit/push
+
+7. Koyeb 접속 : jdbc:h2:mem:springweb2
+8. 회원가입 (git 계정으로)
+9. 로그인
+10. 대시 보드 사이드바 -> [Create Service] -> [Web Service] -> [GitHub] -> Git 인증
+
+11. 배포할 리포지토리 선택 -> CPU Eco 중에 빠른 나라 꺼 사용
+* 무료버전쓸거면 CPU Eco -> Free 에서 고르기 *
+
+12. Web service 드롭다운에서 브랜치를 새로 생성한 브랜치로 변경
+13. Exposed ports 드롭다운에서 Port 번호 8080 으로 변경
+14. [Deploy]
+
+15. application.properties 에서 Koyeb 에서 사용하는 포트 번호 설정 : spring.port= ${PORT:8080}
