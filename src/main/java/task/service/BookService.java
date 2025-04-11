@@ -69,7 +69,18 @@ public class BookService {
         System.out.println("BookService.deleteBook");
         System.out.println("bno = " + bno + ", bpwd = " + bpwd);
 
-        int result = bookRepository.deleteBook(bpwd, bno);
+        Optional<BookEntity> optionalBook = bookRepository.findById(bno);
+        if(optionalBook.isEmpty()){
+            return  false;
+        }
+        BookEntity book =optionalBook.get();
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        if(encoder.matches(bpwd, book.getBpwd())){
+            return false;
+        }
+        int result = bookRepository.deleteBook( bno);
 
         if(result > 0){
             return  true;

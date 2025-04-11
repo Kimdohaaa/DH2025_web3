@@ -19,6 +19,6 @@ public interface BookRepository extends JpaRepository<BookEntity, Integer> {
 
     // [2] 책 추천 삭제
     @Modifying
-    @Query(value = "delete from taskbook where bno = :bno and bpwd = :bpwd", nativeQuery = true)
-    int deleteBook(String bpwd, int bno);
+    @Query(value = "delete from taskbook where bno = :bno", nativeQuery = true)
+    int deleteBook(int bno);
 }
