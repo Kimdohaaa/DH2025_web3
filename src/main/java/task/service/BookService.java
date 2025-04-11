@@ -2,6 +2,7 @@ package task.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import task.model.dto.BookDto;
@@ -24,6 +25,12 @@ public class BookService {
         System.out.println("BookService.saveBook");
         System.out.println("bookDto = " + bookDto);
 
+        BCryptPasswordEncoder BMpwd = new BCryptPasswordEncoder();
+
+        String hashedPassWord = BMpwd.encode(bookDto.getBpwd());
+
+        bookDto.setBpwd(hashedPassWord);
+
         BookEntity bookEntity = bookDto.toEntity();
 
         BookEntity saveEntity = bookRepository.save(bookEntity);
@@ -35,24 +42,27 @@ public class BookService {
     }
 
     // [2] 책 추천 수정
-    public boolean updateBook ( BookDto bookDto){
-        System.out.println("BookService.updateBook");
-        System.out.println("bookDto = " + bookDto);
+    public boolean updateBook(BookDto bookDto){
+        Optional<BookEntity> optionalBook = bookRepository.findById(bookDto.getBno());
+        if (optionalBook.isEmpty()) return false;
 
-        BookEntity bookEntity = bookDto.toEntity();
+        BookEntity original = optionalBook.get();
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (!encoder.matches(bookDto.getBpwd(), original.getBpwd())) {
+            return false; // 비밀번호 틀림
+        }
 
         int result = bookRepository.updateBook(
-                bookEntity.getBname(),bookEntity.getBwriter()
-                , bookEntity.getBcontent(), bookEntity.getBpwd(), bookEntity.getBno()
+                bookDto.getBname(),
+                bookDto.getBwriter(),
+                bookDto.getBcontent(),
+                bookDto.getBno()
         );
 
-        if (result > 0) {
-            return true;
-        }else {
-
-            return false;
-        }
+        return result > 0;
     }
+
 
     // [3] 책 추천 삭제
     public boolean deleteBook ( int bno, String bpwd){

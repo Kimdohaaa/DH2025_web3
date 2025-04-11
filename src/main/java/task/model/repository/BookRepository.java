@@ -13,9 +13,9 @@ public interface BookRepository extends JpaRepository<BookEntity, Integer> {
     @Modifying
     @Query(value = """
             update taskbook set bname = :bname, bwriter = :bwriter, 
-            bcontent = :bcontent where bno = :bno and bpwd = :bpwd
+            bcontent = :bcontent where bno = :bno 
             """, nativeQuery = true)
-    int updateBook(String bname, String bwriter, String  bcontent, String bpwd, int bno);
+    int updateBook(String bname, String bwriter, String  bcontent, int bno);
 
     // [2] 책 추천 삭제
     @Modifying
