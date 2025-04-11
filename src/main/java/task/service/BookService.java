@@ -44,7 +44,7 @@ public class BookService {
     // [2] 책 추천 수정
     public boolean updateBook(BookDto bookDto){
         Optional<BookEntity> optionalBook = bookRepository.findById(bookDto.getBno());
-        if (optionalBook.isEmpty()) return false;
+        if (optionalBook.isEmpty()) {return false;}
 
         BookEntity original = optionalBook.get();
 
@@ -73,20 +73,17 @@ public class BookService {
         if(optionalBook.isEmpty()){
             return  false;
         }
-        BookEntity book =optionalBook.get();
+        BookEntity optional = optionalBook.get();
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        if(encoder.matches(bpwd, book.getBpwd())){
+        if(!encoder.matches(bpwd, optional.getBpwd())){
             return false;
         }
         int result = bookRepository.deleteBook( bno);
 
-        if(result > 0){
-            return  true;
-        }
 
-        return  false;
+        return  result > 0;
     }
 
     // [4] 책 추천 전체 조회
