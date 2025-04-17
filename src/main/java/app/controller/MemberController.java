@@ -46,4 +46,24 @@ public class MemberController {
 
         return memberService.info(token);
     }
+
+    // [4] 로그아웃
+    @GetMapping("/logout")
+    public void logout(
+            // 로그아웃할 토큰 가져오기
+            @RequestHeader("Authorization") String token){
+        System.out.println("MemberController.logout");
+        System.out.println("token = " + token);
+
+        memberService.logout(token);
+    }
+
+    // [5] 최근 24시간 로그인한 접속자 수 조회
+    @GetMapping("/login/count")
+    public int loginCount(){
+        System.out.println("MemberController.loginCount");
+        System.out.println();
+
+        return memberService.loginCount();
+    }
 }

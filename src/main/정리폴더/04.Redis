@@ -1,0 +1,48 @@
+[Redis]
+1. 정의 : 인메모리 데이터 저장소
+ ~ 용어정리 ~
+ -> PC 본체 : (CPU(연산처리) + RAM(휘발성메모리) + ROM/SSD/HDD(비휘발성 메모리))
+ -> RAM(주기억장치) : PC 가 실행 중인 상태에서만 메모리 저장
+ -> ROM/SSD/HDD(보조기억장치) : 비 실행중인 상태에서도 메모리 저장
+ => 보조기억장치보다 주기억장치가 빠름
+2. 목적 : 관계형 DB (ex. MYSQL) 가 보조기억장치이므로 빠른 메모리를 사용할 때 주기억장치인 Redis 사용
+    -> 관계형DB(ex.MYSQL) : SQL (질의어) 사용ㅇ
+    -> 비정형DB(ex. 몽고DB) : noSQL(== 객체 형식 / 질의어 X)
+3. 구조 : key-value (== map/JSON)
+4. Redis 와 RDS 의 차이점
+    -> Redis : 휘발성 메모리 / 속도 빠름 / 종료시 초기화됨 / 영속성 / 단순 연결 구조 / 단순 명령어 사용(NOSQL)
+        => 활용처 : 실시간 데이터 (ex. 로그인 상태 정보)
+    -> RDB : 비휘발성 메모리 / 속도 느림 / 종료시에도 유지 / 복잡한 연결구조(JDBC) / 복잡 명령어(SQL)
+        => 활용처 : 영구저장 데이터 (ex. 회원정보(세션/토큰) / 랭킹 / 채팅 / 캐싱)
+        ★ 캐싱 : Select 할때마다 DB 접근 / 요청 시 과부화 / 성능 저하 (빅데이터의 경우)
+        -> DB 에서 한번 조회한 결과를 Redis 에 저장(캐싱)하여 다시 조회 시 DB 를 다시 조회하지 않고 Redis 를 조회 => 성능향상 가능
+5. Redis 설치 (강의 기준 3.0.504 버전 설치함)
+    1) https://github.com/microsoftarchive/redis/releases -> .zip 파일 설치
+    2) 압축풀기
+    3) 압축 푼 폴더 내 redis-server.exe 파일 실행
+    4) build.gradle 에 라이브러리 빌드 : implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    5) application.properties 에서 ip 와 port 번호 설정
+        -> 실행 중인 Redis 에서 port 번호 확인
+        ->spring.redis.host=localhost
+          spring.redis.port=Redis 포트 번호
+    !!! 끝 !!!
+
+6. 사용법
+    1) 레디스템플릿 객체 선언
+        예] @Autowired // 빈주입
+            private StringRedisTemplate 객체명 = new StringRedisTemplate();
+    2) .opsFor타입() 을 통해 레디스에 데이터 저장
+        - JSON 타입 : .opsForValue().set(키,값, 생명주기값, TimeUnit.XXX);
+            -> TTL(Time To Live) : 해당 데이터의 생명 주기 지정 가능
+                => 지정한 TTL이 지나면 해당 자료 자동 삭제
+                => 생략 가능
+        예] 레디스템플릿객체명.opsForValue().set("JWT:"+email, token, 24 , TimeUnit.HOURS);
+            -> 생명 주기를 하루로 지정
+            -> 보통 생명주기는 토큰의 만료 시간과 동일하게 지정
+    3) 확인
+        - 레디스템플릿객체명.keys("*") : 현재 Redis 에 저장된 모든 key 반환
+        - 레디스템플릿객체명.opsForValue().get("JWT"+email) : 현재 Redis 에 저장된 특정 key 반환
+
+    4) 레디스에 저장된 데이터 삭제
+        - 레디스템플릿객체명.delete(key0 : 현재 Redis 에 저장된 특정 key-value 삭제
+※ 실무에서 관계형 + 비정형 을 혼용하여 사용 ※

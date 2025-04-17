@@ -6,12 +6,17 @@ import app.model.repository.MemberRepository;
 import app.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.lang.reflect.Member;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +76,13 @@ public class MemberService {
         String token = jwtUtil.createToken(memberEntity.getEmail()); // 로그인 성공한 이메일을 매개변수로 전달
         System.out.println(">> 발급된 토큰 : " + token);
 
+
+        // [*] Redis 에 24시간만 저장되는 로그인 로그(기록)처리
+        stringRedisTemplate.opsForValue().set(
+                "RECENTE_LOGIN:"+memberDto.getEmail(), "true",
+                1, TimeUnit.DAYS
+        );
+
         // 6) 토큰 반환
         return  token;
     }
@@ -99,4 +111,28 @@ public class MemberService {
         return  memberEntity.toDto();
     }
 
+    // [4] 로그아웃(Redis 에 저장된 토큰 삭제)
+    public void  logout(String token){
+        System.out.println("MemberService.logout");
+        System.out.println("token = " + token);
+        
+        // 1) 해당 토큰의 이메일 조히
+        String email = jwtUtil.validateToken(token);
+        
+        // 2) 조회된 이메일의 Redis 토큰 삭제
+        jwtUtil.deleteToken(email);
+    }
+
+    // [*] 레디스템플릿 객체 생성
+    private final StringRedisTemplate stringRedisTemplate;
+
+    // [5] 최근 24시간 로그인한 접속자 수 조회
+    public int loginCount(){
+        // 1) Redis 에 저장된 key 중 "RECENTE_LOGIN" 으로 시작하는 모든 키를 가져옴
+        // => Set 타입으로 반환됨
+        Set<String> keys = stringRedisTemplate.keys("RECENT_LOGIN:*");
+
+        // 2) 반환된 key 의 개수 확인 후 반환
+        return  keys == null ? 0 : keys.size();
+    }
 }
