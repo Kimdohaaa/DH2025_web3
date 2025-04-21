@@ -25,7 +25,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     // [1] 회원가입
-    public MemberDto signup(MemberDto memberDto){
+    public boolean signup(MemberDto memberDto){
 
         System.out.println("MemberService.signup");
         System.out.println("memberDto = " + memberDto);
@@ -41,9 +41,9 @@ public class MemberService {
         MemberEntity saveEntity = memberRepository.save(memberEntity);
 
         if(saveEntity.getMno() > 0){
-            return saveEntity.toDto();
+            return true;
         }
-        return  null;
+        return  false;
     }
 
     // [*] 토큰 발급을 위해 JWT 객체 주입 받기

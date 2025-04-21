@@ -3,6 +3,7 @@ package app.controller;
 import app.model.dto.MemberDto;
 import app.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Member;
@@ -17,20 +18,38 @@ public class MemberController {
 
     // [1] 회원가입
     @PostMapping("/signup")
-    public MemberDto signup(@RequestBody MemberDto memberDto){
+    public ResponseEntity<Boolean> signup(@RequestBody MemberDto memberDto){
+        // 제네릭 타입으로 boolean 불가 / Boolean 만 가능
         System.out.println("MemberController.signup");
         System.out.println("memberDto = " + memberDto);
 
-        return  memberService.signup(memberDto);
+        boolean result =  memberService.signup(memberDto);
+
+        // 결과에 따라 개발자 마음대로 원하는 응답코드 반환
+        if(result){
+            // 201(Create OK) : true 반환
+            return ResponseEntity.status(201).body(true);
+
+        }else {
+            // 400(bad request) : false 반환
+            return ResponseEntity.status(400).body(false);
+        }
     }
 
     // [2] 로그인
     @PostMapping("/login")
-    public String login(@RequestBody MemberDto memberDto){
+    public ResponseEntity<String> login(@RequestBody MemberDto memberDto){
         System.out.println("MemberController.login");
         System.out.println("memberDto = " + memberDto);
 
-        return  memberService.login(memberDto);
+        String token = memberService.login(memberDto);
+
+        if(token != null){ // 만약 토큰 존재 시 == 로그인 성공 시
+            // 200 상태 코드 전송 후 body 에 토큰 전송
+            return ResponseEntity.status(200).body(token);
+        }else {
+            return ResponseEntity.status(400).body(null);
+        }
     }
 
     // [3] 로그인된 회원 인증 / 내정보 조회
@@ -40,30 +59,42 @@ public class MemberController {
     // @RequestBody : HTTP 본문의 객체를 매핑 어노테이션
     // @PathUariable : HTTP 헤더의 경로 값 매핑 어노테이션
     @GetMapping("/info")
-    public MemberDto info(@RequestHeader("Authorization") String token){
+    public ResponseEntity<MemberDto> info(@RequestHeader("Authorization") String token){
         System.out.println("MemberController.info");
         System.out.println("token = " + token);
 
-        return memberService.info(token);
+        MemberDto memberDto = memberService.info(token);
+        if(memberDto != null){
+            return  ResponseEntity.status(200).body(memberDto);
+        }else {
+            //  403 상태코드와 NoContent(권한없음) qksghks
+            return  ResponseEntity.status(403).build();
+        }
     }
 
     // [4] 로그아웃
     @GetMapping("/logout")
-    public void logout(
+    public ResponseEntity<Void> logout(
             // 로그아웃할 토큰 가져오기
             @RequestHeader("Authorization") String token){
         System.out.println("MemberController.logout");
         System.out.println("token = " + token);
 
         memberService.logout(token);
+
+        // 204 : 성공했지만 반환할 값이 없다.
+        return  ResponseEntity.status(204).build();
     }
 
     // [5] 최근 24시간 로그인한 접속자 수 조회
     @GetMapping("/login/count")
-    public int loginCount(){
+    public ResponseEntity<Integer> loginCount(){
         System.out.println("MemberController.loginCount");
         System.out.println();
 
-        return memberService.loginCount();
+        int result = memberService.loginCount();
+
+        // 200 : 요청 성공
+        return  ResponseEntity.status(200).body(hashCode());
     }
 }
