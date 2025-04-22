@@ -38,18 +38,10 @@ public class MemberController {
 
     // [2] 로그인
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody MemberDto memberDto){
-        System.out.println("MemberController.login");
-        System.out.println("memberDto = " + memberDto);
-
-        String token = memberService.login(memberDto);
-
-        if(token != null){ // 만약 토큰 존재 시 == 로그인 성공 시
-            // 200 상태 코드 전송 후 body 에 토큰 전송
-            return ResponseEntity.status(200).body(token);
-        }else {
-            return ResponseEntity.status(400).body(null);
-        }
+    public ResponseEntity< String > login( @RequestBody MemberDto memberDto ){
+        String token = memberService.login( memberDto );
+        if( token != null ){   return ResponseEntity.status( 200 ).body( token ); // 만약에 토큰이 존재하면(로그인성공)
+        }else{   return ResponseEntity.status( 401 ).body( "로그인성공" );   } // 인증 실패 : 401
     }
 
     // [3] 로그인된 회원 인증 / 내정보 조회

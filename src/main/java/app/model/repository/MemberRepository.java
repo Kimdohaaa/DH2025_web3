@@ -14,6 +14,5 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Integer> {
     */
 
     // [1] 추상메소드를 이용하여 매개변수 email 을 통해 해당 엔티티 조회
-    @Query(value = "select * from member where email = :email", nativeQuery = true)
-    MemberEntity findByEmail(String email);
+    MemberEntity findByEmail( String email );
 }
