@@ -2,6 +2,7 @@ package app.util;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -11,6 +12,7 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.UUID;
 
+@Component
 public class FileUtil {
 
     // 1. 현재 프로젝트 최상위 디렉토리(폴더) 경로찾기

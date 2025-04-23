@@ -57,16 +57,6 @@ public class ProductEntity extends  BaseTime{
     private List<ReplyEntity> replyEntityList = new ArrayList<>();
 
 
-    ProductDto toDto(){
-        return ProductDto.builder()
-                .pno(this.pno)
-                .pname(this.pname)
-                .pcontent(this.pcontent)
-                .pprcie(this.pprcie)
-                .pview(this.pview)
-                .createAt(this.getCreateAt())
-                .updateAt(this.getUpdateAt())
-                .build();
-    }
+
 
 }
