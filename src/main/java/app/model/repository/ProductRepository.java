@@ -1,6 +1,8 @@
 package app.model.repository;
 
 import app.model.entity.ProductEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,8 +21,17 @@ public interface ProductRepository extends JpaRepository<ProductEntity,Long> {
     List<ProductEntity> findByCategoryEntityCno(long cno);
 
     // 2-2) 네이티브쿼리
-    @Query(value = "select * from product werer cno = :cno", nativeQuery = true)
+    @Query(value = "select * from product where cno = :cno", nativeQuery = true)
     List<ProductEntity> nativeQuery1(long cno);
 
     // 2-3) JPQL : 자바가 만든 SQL 코드/메소드
+
+
+    // [] 카테고리별 제품 키워드 검색
+    // like : 포함
+    // IS NULL : null 검사
+    @Query( value = "SELECT * FROM product " +
+            " WHERE ( :cno IS NULL OR :cno = 0 OR cno = :cno ) " + // java == null vs sql : IS NULL
+            " AND ( :keyword IS NULL OR pname LIKE %:keyword% )" , nativeQuery = true)
+    Page<ProductEntity> findBySearch(Long cno, String keyword, Pageable pageable);
 }

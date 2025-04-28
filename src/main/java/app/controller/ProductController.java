@@ -1,19 +1,23 @@
 package app.controller;
 
+import app.model.dto.CategoryDto;
 import app.model.dto.ProductDto;
 import app.model.entity.ProductEntity;
 import app.service.MemberService;
 import app.service.ProductService;
+import ch.qos.logback.core.encoder.EchoEncoder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
-@CrossOrigin("")
+@CrossOrigin("*")
 public class ProductController {
     private final ProductService productService;
     private final MemberService memberService;
@@ -46,17 +50,17 @@ public class ProductController {
     }
 
     // [2] 전체 조회
-    @GetMapping("/all")
-    public ResponseEntity<List<ProductDto>> allProducts(
-            @RequestParam(required = false) long cno // cno 가 필수가 아님을 지정
-    ){
-        System.out.println("ProductController.allProducts");
-        System.out.println("cno = " + cno);
-
-        List<ProductDto> productDtoList = productService.allProducts(cno);
-
-        return ResponseEntity.status(200).body(productDtoList);
-    }
+//    @GetMapping("/all")
+//    public ResponseEntity<List<ProductDto>> allProducts(
+//            @RequestParam(required = false) long cno // cno 가 필수가 아님을 지정
+//    ){
+//        System.out.println("ProductController.allProducts");
+//        System.out.println("cno = " + cno);
+//
+//        List<ProductDto> productDtoList = productService.allProducts(cno);
+//
+//        return ResponseEntity.status(200).body(productDtoList);
+//    }
 
     // [3] 개별 조회
     @GetMapping("/view")
@@ -100,4 +104,75 @@ public class ProductController {
 
         return  ResponseEntity.status(200).body(true); // 200 : OK
     }
+
+    // [5] 제품 수정 + 이미지 추가
+    // (매개변수 : pname, pcontent, pprice, cno , files , pno , token(권한검증용))
+    @PutMapping("/update")
+    public ResponseEntity<Boolean> updateProduct(
+            @RequestHeader("Authorization") String token,
+            @ModelAttribute ProductDto productDto // 첨부파일을 받기 위해 @ModelAttribute 어노테이션 사용
+            // HTTP Header : 통신 관련 정보(인증정보 / Content-Type)
+            // HTTP Body : 통신 값 정보
+    ){
+        // 1) 토큰을 통해 권한 확인
+        int loginMno ;
+        try{
+            loginMno = memberService.info(token).getMno();
+        }catch (Exception e) {
+            return  ResponseEntity.status(401).body(false); // 401 : 권한 없음 반환
+        }
+
+        // 2) 권한이 있을 경우 Service 에서 처리
+        boolean result = productService.updateProduct(productDto, loginMno);
+
+        if(result == false) {
+            return ResponseEntity.status(400).body(false); // 400 : Bad Request
+        }
+
+        return  ResponseEntity.status(200).body(true);
+    }
+
+    // [6] 이미지 개별 삭제
+    // (매개변수 : ino , token(권한검증용))
+    @DeleteMapping("/image")
+    public ResponseEntity<Boolean> deleteImage(
+            @RequestHeader("Authorization") String token,
+            @RequestParam long ino
+    ){
+        int loginMno;
+        try{
+            loginMno = memberService.info(token).getMno();
+        }catch (Exception e){
+            return ResponseEntity.status(401).body(false);
+        }
+        boolean result = productService.deleteImage(ino , loginMno);
+
+        if(result == false){
+            return  ResponseEntity.status(400).body(false);
+        }
+
+        return  ResponseEntity.status(200).body(true);
+    }
+
+    // [7] 카테고리 조회
+    @GetMapping("/category")
+    public ResponseEntity<List<CategoryDto>> getCategory(){
+        List<CategoryDto> categoryDtos = productService.getCategory();
+        return ResponseEntity.status(200).body(categoryDtos);
+    }
+
+    // [8] 검색 + 페이징 처리 기능 ([2] 조회 기능 업그레이드 버전)
+    // (매개변수 : cno(없으면 전체 조회), page(현재 페이지 번호/없으면 1), size(페이지 당 게시물 수) keyword(검색할 제품명/없으면 전체 조회))
+    // 앱 기준 스크롤로 페이지 구분
+    @GetMapping("/all")
+    public ResponseEntity<Page<ProductDto> > allProducts(
+            // Page 타입 사용 : content(자료) / totalPage / totalElements 등 페이지 관련 정보를 제공해줌
+            @RequestParam( required = false ) Long cno , //  cno : 카테고리 번호 , long(기본타입)  Long(참조타입)
+            @RequestParam( defaultValue = "1" ) int page , // page : 조회할 현재페이지 번호 , defaultValue="기본값"
+            @RequestParam( defaultValue = "5") int size ,  // size : 페이지당 게시물수
+            @RequestParam( required = false ) String keyword ){  // keyword : (제품명) 검색어
+        Page<ProductDto> productDtoList = productService.allProduct( cno , page, size , keyword );
+        return ResponseEntity.status( 200 ).body( productDtoList );
+    }
 }
+

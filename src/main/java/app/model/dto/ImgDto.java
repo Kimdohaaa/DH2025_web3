@@ -19,7 +19,7 @@ public class ImgDto {
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
-    ImgEntity toEntity(){
+    public  ImgEntity toEntity(){
         return ImgEntity.builder()
                 .ino(this.ino)
                 .iname(this.iname)

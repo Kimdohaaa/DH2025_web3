@@ -24,18 +24,8 @@ public class CategoryEntity extends BaseTime{
 
     // 양방향연결 //
     // CategoryEntity <-연결-> ProductEntity
-    @OneToMany(mappedBy = "categoryEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @Builder.Default
+    @OneToMany( mappedBy = "categoryEntity" , cascade = CascadeType.ALL , fetch = FetchType.LAZY )
+    @ToString.Exclude @Builder.Default
     private List<ProductEntity> productEntityList = new ArrayList<>();
-
-    CategoryDto toDto(){
-        return CategoryDto.builder()
-                .cno(this.cno)
-                .cname(this.cname)
-                .createAt(this.getCreateAt())
-                .updateAt(this.getUpdateAt())
-                .build();
-    }
 
 }

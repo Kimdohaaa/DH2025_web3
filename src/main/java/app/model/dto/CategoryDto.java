@@ -19,10 +19,17 @@ public class CategoryDto {
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
-    CategoryEntity toEntity(){
+    public CategoryEntity toEntity(){
         return CategoryEntity.builder()
                 .cno(this.cno)
                 .cname(this.cname)
+                .build();
+    }
+
+    public static  CategoryDto toDto (CategoryEntity categoryEntity){
+        return CategoryDto.builder()
+                .cno(categoryEntity.getCno())
+                .cname(categoryEntity.getCname())
                 .build();
     }
 }
